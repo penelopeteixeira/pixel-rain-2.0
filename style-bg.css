@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  min-block-size: 100vh;
+  isolation: isolate;
+  background-color: #080c16;
+  color: #e8eefb;
+  color-scheme: dark;
+}
+
+.interactive-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 12% 85%, rgb(19 62 91 / 36%), transparent 54%),
+    radial-gradient(ellipse at 94% 18%, rgb(46 36 84 / 40%), transparent 56%),
+    linear-gradient(145deg, #080b14, #0b111f);
+}
+
+.interactive-bg canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+#rain-bg-config .rain-control__actions {
+  grid-template-columns: 1fr;
+}

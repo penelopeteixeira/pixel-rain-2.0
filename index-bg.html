@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chuva de pixels e malha interativa</title>
+  <link rel="stylesheet" href="style-bg.css">
+  <link rel="stylesheet" href="style-control.css">
+  <script src="script-bg.js" defer></script>
+</head>
+<body>
+  <div class="interactive-bg" id="interactive-bg" aria-hidden="true">
+    <canvas data-rain></canvas>
+    <canvas data-mesh></canvas>
+  </div>
+
+  <details class="rain-control" id="rain-bg-controls" open>
+    <summary>Configurar chuva</summary>
+    <form id="rain-bg-config">
+      <div class="rain-control__settings">
+        <div class="rain-control__field">
+          <div class="rain-control__label">
+            <label for="rain-bg-speed">Velocidade dos pingos</label>
+            <output for="rain-bg-speed" aria-hidden="true"></output>
+          </div>
+          <input id="rain-bg-speed" name="speed" type="range" min="8" max="160" step="1" data-unit="px/s">
+        </div>
+        <div class="rain-control__field">
+          <div class="rain-control__label">
+            <label for="rain-bg-intensity">Intensidade da cor</label>
+            <output for="rain-bg-intensity" aria-hidden="true"></output>
+          </div>
+          <input id="rain-bg-intensity" name="intensity" type="range" min="0" max="300" step="5" data-unit="%">
+        </div>
+        <div class="rain-control__field">
+          <div class="rain-control__label">
+            <label for="rain-bg-size">Tamanho dos pingos</label>
+            <output for="rain-bg-size" aria-hidden="true"></output>
+          </div>
+          <input id="rain-bg-size" name="size" type="range" min="1" max="6" step="0.1" data-unit="px">
+        </div>
+        <div class="rain-control__field">
+          <div class="rain-control__label">
+            <label for="rain-bg-density">Densidade da chuva</label>
+            <output for="rain-bg-density" aria-hidden="true"></output>
+          </div>
+          <input id="rain-bg-density" name="density" type="range" min="25" max="250" step="5" data-unit="%">
+        </div>
+      </div>
+      <div class="rain-control__actions">
+        <button type="reset">Restaurar padrão</button>
+      </div>
+    </form>
+  </details>
+  <!-- O conteúdo da aplicação pode entrar aqui, depois do fundo. -->
+</body>
+</html>
