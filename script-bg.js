@@ -46,6 +46,8 @@
     const style = getComputedStyle(document.documentElement);
     return {
       meshFill: style.getPropertyValue('--mesh-fill').trim(),
+      meshAccent: style.getPropertyValue('--mesh-accent').trim(),
+      meshPointOpacity: Number(style.getPropertyValue('--mesh-point-opacity')),
       meshGlow0: style.getPropertyValue('--mesh-glow-0').trim(),
       meshGlow1: style.getPropertyValue('--mesh-glow-1').trim(),
       meshStroke: style.getPropertyValue('--mesh-stroke').trim(),
@@ -86,6 +88,7 @@
     const current = document.documentElement.getAttribute('data-theme') || DARK;
     const next = current === DARK ? LIGHT : DARK;
     setTheme(next);
+    drawMesh();
   }
 
   function setupControls() {
@@ -234,8 +237,8 @@
   function drawMesh() {
     const colors = getThemeColors();
     mesh.clearRect(0, 0, width, height);
-    mesh.fillStyle = colors.meshFill;
-    mesh.globalAlpha = 0.22;
+    mesh.fillStyle = `rgb(${colors.meshFill})`;
+    mesh.globalAlpha = colors.meshPointOpacity;
     mesh.beginPath();
     for (const point of points) {
       project(point);
@@ -262,11 +265,16 @@
       if (index + columns < points.length) drawLink(point, points[index + columns]);
     }
 
+    const [baseRed, baseGreen, baseBlue] = colors.meshFill.split(/\s+/).map(Number);
+    const [accentRed, accentGreen, accentBlue] = colors.meshAccent.split(/\s+/).map(Number);
     for (const point of points) {
       const { power } = point;
       if (power === 0) continue;
-      mesh.fillStyle = `rgb(${161 - 38 * power}, ${181 + 47 * power}, ${217 + 17 * power})`;
-      mesh.globalAlpha = 0.22 + 0.48 * power;
+      const red = baseRed + (accentRed - baseRed) * power;
+      const green = baseGreen + (accentGreen - baseGreen) * power;
+      const blue = baseBlue + (accentBlue - baseBlue) * power;
+      mesh.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+      mesh.globalAlpha = colors.meshPointOpacity + 0.48 * power;
       mesh.beginPath();
       mesh.arc(point.drawX, point.drawY, baseRadius + 0.5 * power, 0, Math.PI * 2);
       mesh.fill();

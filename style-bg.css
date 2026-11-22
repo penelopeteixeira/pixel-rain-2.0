@@ -5,7 +5,9 @@
   --bg-gradient: radial-gradient(ellipse at 12% 85%, rgb(19 62 91 / 36%), transparent 54%),
     radial-gradient(ellipse at 94% 18%, rgb(46 36 84 / 40%), transparent 56%),
     linear-gradient(145deg, #080b14, #0b111f);
-  --mesh-fill: #a1b5d9;
+  --mesh-fill: 161 181 217;
+  --mesh-accent: 123 228 234;
+  --mesh-point-opacity: 0.22;
   --mesh-glow-0: #4388b6;
   --mesh-glow-1: #4388b600;
   --mesh-stroke: #8bbbd8;
@@ -20,10 +22,12 @@
   --bg-gradient: radial-gradient(ellipse at 12% 85%, rgb(170 160 210 / 28%), transparent 54%),
     radial-gradient(ellipse at 94% 18%, rgb(140 130 190 / 30%), transparent 56%),
     linear-gradient(145deg, #eef2f8, #e6eaf2);
-  --mesh-fill: #5a6b8d;
+  --mesh-fill: 70 87 118;
+  --mesh-accent: 34 91 112;
+  --mesh-point-opacity: 0.27;
   --mesh-glow-0: #6a7aad;
   --mesh-glow-1: #6a7aad00;
-  --mesh-stroke: #8a9bc4;
+  --mesh-stroke: #49688e;
   --rain-color: #3a5a8c;
   --rain-accent: #5a4a8c;
 }
