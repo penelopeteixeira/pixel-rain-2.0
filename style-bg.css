@@ -26,6 +26,15 @@ body {
   block-size: 100%;
 }
 
+.rain-control {
+  position: fixed;
+  z-index: 10;
+  left: 16px;
+  bottom: 16px;
+  right: auto;
+  top: auto;
+}
+
 #rain-bg-config .rain-control__actions {
   grid-template-columns: 1fr;
 }
