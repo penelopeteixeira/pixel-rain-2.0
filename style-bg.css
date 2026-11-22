@@ -1,37 +1,41 @@
 :root {
-  --bg-body: #080c16;
-  --bg-text: #e8eefb;
-  --bg-gradient-1: rgb(19 62 91 / 36%);
-  --bg-gradient-2: rgb(46 36 84 / 40%);
-  --bg-gradient-3-start: #080b14;
-  --bg-gradient-3-end: #0b111f;
+  --bg-color: #080c16;
+  --fg-color: #e8eefb;
+  --color-scheme: dark;
+  --bg-gradient: radial-gradient(ellipse at 12% 85%, rgb(19 62 91 / 36%), transparent 54%),
+    radial-gradient(ellipse at 94% 18%, rgb(46 36 84 / 40%), transparent 56%),
+    linear-gradient(145deg, #080b14, #0b111f);
+  --mesh-fill: #a1b5d9;
+  --mesh-glow-0: #4388b6;
+  --mesh-glow-1: #4388b600;
+  --mesh-stroke: #8bbbd8;
   --rain-color: #87AFEA;
   --rain-accent: #9D93EE;
-  --mesh-fill: #a1b5d9;
-  --mesh-glow-start: #4388b6;
-  --mesh-stroke: #8bbbd8;
-  --mesh-point-r: 161;
-  --mesh-point-g: 181;
-  --mesh-point-b: 217;
-  --rc-bg: #161b22;
-  --rc-border: #30363d;
-  --rc-text: #e8eefb;
-  --rc-label: #8b949e;
-  --rc-track: #30363d;
-  --rc-thumb: #87AFEA;
-  --rc-button-bg: #21262d;
-  --rc-button-border: #30363d;
-  --rc-button-text: #e8eefb;
-  --rc-button-hover: #30363d;
+}
+
+[data-theme="light"] {
+  --bg-color: #f4f6fb;
+  --fg-color: #1e2a38;
+  --color-scheme: light;
+  --bg-gradient: radial-gradient(ellipse at 12% 85%, rgb(170 160 210 / 28%), transparent 54%),
+    radial-gradient(ellipse at 94% 18%, rgb(140 130 190 / 30%), transparent 56%),
+    linear-gradient(145deg, #eef2f8, #e6eaf2);
+  --mesh-fill: #5a6b8d;
+  --mesh-glow-0: #6a7aad;
+  --mesh-glow-1: #6a7aad00;
+  --mesh-stroke: #8a9bc4;
+  --rain-color: #3a5a8c;
+  --rain-accent: #5a4a8c;
 }
 
 body {
   margin: 0;
   min-block-size: 100vh;
   isolation: isolate;
-  background-color: var(--bg-body);
-  color: var(--bg-text);
-  color-scheme: dark;
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+  color-scheme: var(--color-scheme);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .interactive-bg {
@@ -39,38 +43,8 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse at 12% 85%, var(--bg-gradient-1), transparent 54%),
-    radial-gradient(ellipse at 94% 18%, var(--bg-gradient-2), transparent 56%),
-    linear-gradient(145deg, var(--bg-gradient-3-start), var(--bg-gradient-3-end));
-}
-
-[data-theme="light"] {
-  color-scheme: light;
-  --bg-body: #f4f7fa;
-  --bg-text: #1e2a38;
-  --bg-gradient-1: rgb(140 170 200 / 28%);
-  --bg-gradient-2: rgb(160 140 200 / 24%);
-  --bg-gradient-3-start: #eef2f6;
-  --bg-gradient-3-end: #e2e8ee;
-  --rain-color: #2563eb;
-  --rain-accent: #7c3aed;
-  --mesh-fill: #64748b;
-  --mesh-glow-start: #3b82f6;
-  --mesh-stroke: #94a3b8;
-  --mesh-point-r: 91;
-  --mesh-point-g: 112;
-  --mesh-point-b: 139;
-  --rc-bg: #ffffff;
-  --rc-border: #cbd5e1;
-  --rc-text: #1e2a38;
-  --rc-label: #64748b;
-  --rc-track: #cbd5e1;
-  --rc-thumb: #2563eb;
-  --rc-button-bg: #f1f5f9;
-  --rc-button-border: #cbd5e1;
-  --rc-button-text: #1e2a38;
-  --rc-button-hover: #e2e8f0;
+  background: var(--bg-gradient);
+  transition: background 0.3s ease;
 }
 
 .interactive-bg canvas {
@@ -88,6 +62,34 @@ body {
   bottom: 16px;
   right: auto;
   top: auto;
+}
+
+.theme-toggle {
+  position: fixed;
+  z-index: 10;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-color);
+  color: var(--fg-color);
+  cursor: pointer;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: rotate(15deg);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--fg-color);
+  outline-offset: 2px;
 }
 
 #rain-bg-config .rain-control__actions {

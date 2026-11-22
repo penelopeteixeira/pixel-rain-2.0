@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Chuva de pixels e malha interativa</title>
   <link rel="stylesheet" href="style-bg.css">
-  <link rel="stylesheet" href="style-control.css">
   <script src="script-bg.js" defer></script>
 </head>
 <body>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema" title="Alternar entre modo claro e escuro">
+    <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+  </button>
+
   <div class="interactive-bg" id="interactive-bg" aria-hidden="true">
     <canvas data-rain></canvas>
     <canvas data-mesh></canvas>
   </div>
-
-  <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema" title="Alternar entre modo claro e escuro">🌙</button>
 
   <details class="rain-control" id="rain-bg-controls">
     <summary>Configurar chuva</summary>

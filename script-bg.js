@@ -9,6 +9,12 @@
   if (!rain || !mesh) return;
 
   const panel = document.getElementById('rain-bg-controls');
+  const toggle = document.getElementById('theme-toggle');
+  const toggleIcon = toggle?.querySelector('.theme-toggle__icon');
+  const THEME_KEY = 'pixel-rain-theme';
+  const DARK = 'dark';
+  const LIGHT = 'light';
+
   const preset = {
     speed: 80,
     intensity: 240,
@@ -23,42 +29,6 @@
   const pointer = { x: 0, y: 0, targetX: 0, targetY: 0, strength: 0, active: false };
   const baseRadius = 0.82;
   const maxDisplacement = 5;
-  const THEME_KEY = 'pixel-rain-theme';
-  const html = document.documentElement;
-  const toggle = document.getElementById('theme-toggle');
-  let themeColors = {};
-
-  function getCssVar(name, fallback = '') {
-    return getComputedStyle(html).getPropertyValue(name).trim() || fallback;
-  }
-
-  function refreshThemeColors() {
-    themeColors = {
-      rainColor: getCssVar('--rain-color', settings.color),
-      rainAccent: getCssVar('--rain-accent', settings.accentColor),
-      meshFill: getCssVar('--mesh-fill', '#a1b5d9'),
-      meshGlowStart: getCssVar('--mesh-glow-start', '#4388b6'),
-      meshStroke: getCssVar('--mesh-stroke', '#8bbbd8'),
-      meshPointR: parseInt(getCssVar('--mesh-point-r', '161'), 10) || 161,
-      meshPointG: parseInt(getCssVar('--mesh-point-g', '181'), 10) || 181,
-      meshPointB: parseInt(getCssVar('--mesh-point-b', '217'), 10) || 217,
-    };
-  }
-
-  function applyTheme(theme) {
-    html.dataset.theme = theme;
-    localStorage.setItem(THEME_KEY, theme);
-    toggle.textContent = theme === 'light' ? '☀️' : '🌙';
-    toggle.setAttribute('aria-checked', theme === 'light');
-    refreshThemeColors();
-    drawRain(0);
-    drawMesh();
-  }
-
-  const savedTheme = localStorage.getItem(THEME_KEY);
-  const initialTheme = savedTheme ?? 'dark';
-  applyTheme(initialTheme);
-
   let bounds;
   let width;
   let height;
@@ -71,6 +41,52 @@
   let previousTime = null;
 
   const random = (min, max) => min + Math.random() * (max - min);
+
+  function getThemeColors() {
+    const style = getComputedStyle(document.documentElement);
+    return {
+      meshFill: style.getPropertyValue('--mesh-fill').trim(),
+      meshGlow0: style.getPropertyValue('--mesh-glow-0').trim(),
+      meshGlow1: style.getPropertyValue('--mesh-glow-1').trim(),
+      meshStroke: style.getPropertyValue('--mesh-stroke').trim(),
+      rainColor: style.getPropertyValue('--rain-color').trim(),
+      rainAccent: style.getPropertyValue('--rain-accent').trim(),
+    };
+  }
+
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem(THEME_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // Ignore storage errors (private mode, etc.)
+    }
+    if (toggleIcon) {
+      toggleIcon.textContent = theme === LIGHT ? '☀️' : '🌙';
+    }
+    toggle?.setAttribute('aria-pressed', theme === LIGHT);
+  }
+
+  function initTheme() {
+    const stored = getStoredTheme();
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored || (prefersDark ? DARK : LIGHT);
+    setTheme(theme);
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || DARK;
+    const next = current === DARK ? LIGHT : DARK;
+    setTheme(next);
+  }
 
   function setupControls() {
     const form = panel.querySelector('form');
@@ -157,6 +173,7 @@
   }
 
   function drawRain(elapsed) {
+    const colors = getThemeColors();
     rain.clearRect(0, 0, width, height);
     const travel = height + 130;
     const intensity = settings.intensity / 100;
@@ -167,7 +184,7 @@
       const centralDimming = 0.68 + 0.32 * Math.min(1, Math.abs(drop.x / width - 0.5) * 2);
       const distance = Math.hypot(drop.x - pointer.x, head - pointer.y);
       const highlight = 1 + 0.28 * pointer.strength * Math.max(0, 1 - distance / radius);
-      rain.fillStyle = index % 4 === 0 ? themeColors.rainAccent : themeColors.rainColor;
+      rain.fillStyle = index % 4 === 0 ? colors.rainAccent : colors.rainColor;
 
       for (let tail = 0; tail <= settings.trail; tail++) {
         const y = head - tail * drop.gap;
@@ -215,8 +232,9 @@
   }
 
   function drawMesh() {
+    const colors = getThemeColors();
     mesh.clearRect(0, 0, width, height);
-    mesh.fillStyle = themeColors.meshFill;
+    mesh.fillStyle = colors.meshFill;
     mesh.globalAlpha = 0.22;
     mesh.beginPath();
     for (const point of points) {
@@ -229,13 +247,13 @@
     if (!pointer.strength) return;
 
     const glow = mesh.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, radius * 1.5);
-    glow.addColorStop(0, themeColors.meshGlowStart);
-    glow.addColorStop(1, themeColors.meshGlowStart + '00');
+    glow.addColorStop(0, colors.meshGlow0);
+    glow.addColorStop(1, colors.meshGlow1);
     mesh.fillStyle = glow;
     mesh.globalAlpha = 0.13 * pointer.strength;
     mesh.fillRect(pointer.x - radius * 1.5, pointer.y - radius * 1.5, radius * 3, radius * 3);
 
-    mesh.strokeStyle = themeColors.meshStroke;
+    mesh.strokeStyle = colors.meshStroke;
     mesh.lineWidth = 0.65;
     for (let index = 0; index < points.length; index++) {
       const point = points[index];
@@ -247,7 +265,7 @@
     for (const point of points) {
       const { power } = point;
       if (power === 0) continue;
-      mesh.fillStyle = `rgb(${themeColors.meshPointR - 38 * power}, ${themeColors.meshPointG + 47 * power}, ${themeColors.meshPointB + 17 * power})`;
+      mesh.fillStyle = `rgb(${161 - 38 * power}, ${181 + 47 * power}, ${217 + 17 * power})`;
       mesh.globalAlpha = 0.22 + 0.48 * power;
       mesh.beginPath();
       mesh.arc(point.drawX, point.drawY, baseRadius + 0.5 * power, 0, Math.PI * 2);
@@ -314,16 +332,14 @@
   }
 
   if (panel) setupControls();
+  if (toggle) toggle.addEventListener('click', toggleTheme);
   window.addEventListener('pointermove', followPointer, { passive: true });
   document.documentElement.addEventListener('pointerleave', leave);
   window.addEventListener('blur', leave);
   window.addEventListener('resize', resize, { passive: true });
   document.addEventListener('visibilitychange', syncAnimation);
   motion.addEventListener('change', syncAnimation);
-  toggle.addEventListener('click', () => {
-    const next = html.dataset.theme === 'light' ? 'dark' : 'light';
-    applyTheme(next);
-  });
+  initTheme();
   resize();
   syncAnimation();
 })();
