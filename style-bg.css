@@ -1,9 +1,36 @@
+:root {
+  --bg-body: #080c16;
+  --bg-text: #e8eefb;
+  --bg-gradient-1: rgb(19 62 91 / 36%);
+  --bg-gradient-2: rgb(46 36 84 / 40%);
+  --bg-gradient-3-start: #080b14;
+  --bg-gradient-3-end: #0b111f;
+  --rain-color: #87AFEA;
+  --rain-accent: #9D93EE;
+  --mesh-fill: #a1b5d9;
+  --mesh-glow-start: #4388b6;
+  --mesh-stroke: #8bbbd8;
+  --mesh-point-r: 161;
+  --mesh-point-g: 181;
+  --mesh-point-b: 217;
+  --rc-bg: #161b22;
+  --rc-border: #30363d;
+  --rc-text: #e8eefb;
+  --rc-label: #8b949e;
+  --rc-track: #30363d;
+  --rc-thumb: #87AFEA;
+  --rc-button-bg: #21262d;
+  --rc-button-border: #30363d;
+  --rc-button-text: #e8eefb;
+  --rc-button-hover: #30363d;
+}
+
 body {
   margin: 0;
   min-block-size: 100vh;
   isolation: isolate;
-  background-color: #080c16;
-  color: #e8eefb;
+  background-color: var(--bg-body);
+  color: var(--bg-text);
   color-scheme: dark;
 }
 
@@ -13,9 +40,37 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 12% 85%, rgb(19 62 91 / 36%), transparent 54%),
-    radial-gradient(ellipse at 94% 18%, rgb(46 36 84 / 40%), transparent 56%),
-    linear-gradient(145deg, #080b14, #0b111f);
+    radial-gradient(ellipse at 12% 85%, var(--bg-gradient-1), transparent 54%),
+    radial-gradient(ellipse at 94% 18%, var(--bg-gradient-2), transparent 56%),
+    linear-gradient(145deg, var(--bg-gradient-3-start), var(--bg-gradient-3-end));
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg-body: #f4f7fa;
+  --bg-text: #1e2a38;
+  --bg-gradient-1: rgb(140 170 200 / 28%);
+  --bg-gradient-2: rgb(160 140 200 / 24%);
+  --bg-gradient-3-start: #eef2f6;
+  --bg-gradient-3-end: #e2e8ee;
+  --rain-color: #2563eb;
+  --rain-accent: #7c3aed;
+  --mesh-fill: #64748b;
+  --mesh-glow-start: #3b82f6;
+  --mesh-stroke: #94a3b8;
+  --mesh-point-r: 91;
+  --mesh-point-g: 112;
+  --mesh-point-b: 139;
+  --rc-bg: #ffffff;
+  --rc-border: #cbd5e1;
+  --rc-text: #1e2a38;
+  --rc-label: #64748b;
+  --rc-track: #cbd5e1;
+  --rc-thumb: #2563eb;
+  --rc-button-bg: #f1f5f9;
+  --rc-button-border: #cbd5e1;
+  --rc-button-text: #1e2a38;
+  --rc-button-hover: #e2e8f0;
 }
 
 .interactive-bg canvas {

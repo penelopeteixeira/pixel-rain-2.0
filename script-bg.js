@@ -23,6 +23,42 @@
   const pointer = { x: 0, y: 0, targetX: 0, targetY: 0, strength: 0, active: false };
   const baseRadius = 0.82;
   const maxDisplacement = 5;
+  const THEME_KEY = 'pixel-rain-theme';
+  const html = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  let themeColors = {};
+
+  function getCssVar(name, fallback = '') {
+    return getComputedStyle(html).getPropertyValue(name).trim() || fallback;
+  }
+
+  function refreshThemeColors() {
+    themeColors = {
+      rainColor: getCssVar('--rain-color', settings.color),
+      rainAccent: getCssVar('--rain-accent', settings.accentColor),
+      meshFill: getCssVar('--mesh-fill', '#a1b5d9'),
+      meshGlowStart: getCssVar('--mesh-glow-start', '#4388b6'),
+      meshStroke: getCssVar('--mesh-stroke', '#8bbbd8'),
+      meshPointR: parseInt(getCssVar('--mesh-point-r', '161'), 10) || 161,
+      meshPointG: parseInt(getCssVar('--mesh-point-g', '181'), 10) || 181,
+      meshPointB: parseInt(getCssVar('--mesh-point-b', '217'), 10) || 217,
+    };
+  }
+
+  function applyTheme(theme) {
+    html.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+    toggle.textContent = theme === 'light' ? '☀️' : '🌙';
+    toggle.setAttribute('aria-checked', theme === 'light');
+    refreshThemeColors();
+    drawRain(0);
+    drawMesh();
+  }
+
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  const initialTheme = savedTheme ?? 'dark';
+  applyTheme(initialTheme);
+
   let bounds;
   let width;
   let height;
@@ -131,7 +167,7 @@
       const centralDimming = 0.68 + 0.32 * Math.min(1, Math.abs(drop.x / width - 0.5) * 2);
       const distance = Math.hypot(drop.x - pointer.x, head - pointer.y);
       const highlight = 1 + 0.28 * pointer.strength * Math.max(0, 1 - distance / radius);
-      rain.fillStyle = index % 4 === 0 ? settings.accentColor : settings.color;
+      rain.fillStyle = index % 4 === 0 ? themeColors.rainAccent : themeColors.rainColor;
 
       for (let tail = 0; tail <= settings.trail; tail++) {
         const y = head - tail * drop.gap;
@@ -180,7 +216,7 @@
 
   function drawMesh() {
     mesh.clearRect(0, 0, width, height);
-    mesh.fillStyle = '#a1b5d9';
+    mesh.fillStyle = themeColors.meshFill;
     mesh.globalAlpha = 0.22;
     mesh.beginPath();
     for (const point of points) {
@@ -193,13 +229,13 @@
     if (!pointer.strength) return;
 
     const glow = mesh.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, radius * 1.5);
-    glow.addColorStop(0, '#4388b6');
-    glow.addColorStop(1, '#4388b600');
+    glow.addColorStop(0, themeColors.meshGlowStart);
+    glow.addColorStop(1, themeColors.meshGlowStart + '00');
     mesh.fillStyle = glow;
     mesh.globalAlpha = 0.13 * pointer.strength;
     mesh.fillRect(pointer.x - radius * 1.5, pointer.y - radius * 1.5, radius * 3, radius * 3);
 
-    mesh.strokeStyle = '#8bbbd8';
+    mesh.strokeStyle = themeColors.meshStroke;
     mesh.lineWidth = 0.65;
     for (let index = 0; index < points.length; index++) {
       const point = points[index];
@@ -211,7 +247,7 @@
     for (const point of points) {
       const { power } = point;
       if (power === 0) continue;
-      mesh.fillStyle = `rgb(${161 - 38 * power}, ${181 + 47 * power}, ${217 + 17 * power})`;
+      mesh.fillStyle = `rgb(${themeColors.meshPointR - 38 * power}, ${themeColors.meshPointG + 47 * power}, ${themeColors.meshPointB + 17 * power})`;
       mesh.globalAlpha = 0.22 + 0.48 * power;
       mesh.beginPath();
       mesh.arc(point.drawX, point.drawY, baseRadius + 0.5 * power, 0, Math.PI * 2);
@@ -284,6 +320,10 @@
   window.addEventListener('resize', resize, { passive: true });
   document.addEventListener('visibilitychange', syncAnimation);
   motion.addEventListener('change', syncAnimation);
+  toggle.addEventListener('click', () => {
+    const next = html.dataset.theme === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
   resize();
   syncAnimation();
 })();
